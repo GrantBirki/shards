@@ -62,6 +62,8 @@ module Shards
       end
 
       private def install(packages : Array(Package))
+        Log.debug { "installing #{packages.size} packages" }
+
         # packages are returned by the solver in reverse topological order,
         # so transitive dependencies are installed first
         packages.each do |package|
