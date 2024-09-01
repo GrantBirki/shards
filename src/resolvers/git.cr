@@ -286,7 +286,7 @@ module Shards
 
     def update_local_cache
       if cloned_repository? && origin_changed?
-        Log.debug {"A local clone exists but the origin has changed... deleting the local repository"}
+        Log.debug { "A local clone exists but the origin has changed... deleting the local repository" }
         delete_repository
         @updated_cache = false
       end
@@ -307,7 +307,7 @@ module Shards
         mirror_repository
       end
 
-      Log.debug {"updated local cache"}
+      Log.debug { "updated local cache" }
       @updated_cache = true
     end
 
