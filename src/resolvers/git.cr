@@ -242,6 +242,7 @@ module Shards
     end
 
     def git_url
+      Log.debug { "git_url: #{source.strip}" }
       source.strip
     end
 
@@ -285,6 +286,7 @@ module Shards
 
     def update_local_cache
       if cloned_repository? && origin_changed?
+        Log.debug {"A local clone exists but the origin has changed... deleting the local repository"}
         delete_repository
         @updated_cache = false
       end
@@ -305,6 +307,7 @@ module Shards
         mirror_repository
       end
 
+      Log.debug {"updated local cache"}
       @updated_cache = true
     end
 
@@ -363,11 +366,20 @@ module Shards
 
     # Returns whether origin URLs have differing hosts and/or paths.
     protected def origin_changed?
-      return false if origin_url == git_url
-      return true if origin_url.nil? || git_url.nil?
+      if origin_url == git_url
+        Log.debug { "#{origin_url} == #{git_url}" }
+        return false
+      end
+
+      if origin_url.nil? || git_url.nil?
+        Log.debug { "origin_url=#{origin_url.nil?} git_url=#{git_url.nil?}" }
+        return true
+      end
 
       origin_parsed = parse_uri(origin_url)
+      Log.debug { "origin_parsed.host=#{origin_parsed.host} origin_parsed.path=#{origin_parsed.path}" }
       git_parsed = parse_uri(git_url)
+      Log.debug { "git_parsed.host=#{git_parsed.host} git_parsed.path=#{git_parsed.path}" }
 
       (origin_parsed.host != git_parsed.host) || (origin_parsed.path != git_parsed.path)
     end

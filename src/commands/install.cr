@@ -46,13 +46,11 @@ module Shards
         packages.each do |package|
           if lock = locks.shards.find { |d| d.name == package.name }
             if lock.resolver != package.resolver
-              Log.warn { "Source of #{package.name} has changed" }
               raise LockConflict.new("#{package.name} source changed")
             else
               validate_locked_version(package, lock.version)
             end
           else
-            Log.warn { "New dependency #{package.name} cannot be installed in production" }
             raise LockConflict.new("can't install new dependency #{package.name} in production")
           end
         end
@@ -60,7 +58,6 @@ module Shards
 
       private def validate_locked_version(package, version)
         return if package.version == version
-        Log.warn { "Requirements for #{package.name} have changed" }
         raise LockConflict.new("#{package.name} requirements changed")
       end
 
