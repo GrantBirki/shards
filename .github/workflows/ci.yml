@@ -74,7 +74,8 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: make bin/shards debug=1 release=1
 
-      - uses: actions/upload-artifact@v4
+      - name: upload linux binary as artifact
+        uses: actions/upload-artifact@v4
         if: ${{ runner.os == 'Linux' }}
         with:
           name: shards
