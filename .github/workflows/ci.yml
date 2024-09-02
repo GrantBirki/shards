@@ -61,6 +61,17 @@ jobs:
       - name: Download source
         uses: actions/checkout@v4
 
+      - name: build linux
+        if: ${{ runner.os == 'Linux' }}
+        run: make bin/shards debug=1 release=1 static=1
+
+      - name: upload linux binary as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ runner.os == 'Linux' }}
+        with:
+          name: "shards-${{ matrix.os }}-${{ matrix.crystal }}"
+          path: bin/shards
+
       - name: Build
         run: make -f ${{ runner.os == 'Windows' && 'Makefile.win' || 'Makefile' }}
 
@@ -69,17 +80,6 @@ jobs:
 
       - name: Check formatting
         run: crystal tool format --check src spec
-
-      - name: build linux
-        if: ${{ runner.os == 'Linux' }}
-        run: make bin/shards debug=1 release=1
-
-      - name: upload linux binary as artifact
-        uses: actions/upload-artifact@v4
-        if: ${{ runner.os == 'Linux' }}
-        with:
-          name: "shards-${{ matrix.os }}-${{ matrix.crystal }}"
-          path: bin/shards
 
   docs:
     runs-on: ubuntu-22.04
