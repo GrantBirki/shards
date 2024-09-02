@@ -423,7 +423,10 @@ module Shards
       if Shards.local? && !Dir.exists?(path)
         dependency_name = File.basename(path, ".git")
         raise Error.new("Missing repository cache for #{dependency_name.inspect}. Please run without --local to fetch it.")
+      else
+        Log.debug { "running with --local and repository cache was found: #{path}" }
       end
+
       run_in_folder(command, path, capture)
     end
 
@@ -434,7 +437,7 @@ module Shards
         raise Error.new("Error missing git command line tool. Please install Git first!")
       end
 
-      Log.debug { command }
+      Log.debug { "command: `#{command}` path: `#{path}` capture: `#{capture}` local_path: `#{local_path}`" }
 
       output = capture ? IO::Memory.new : Process::Redirect::Close
       error = IO::Memory.new
