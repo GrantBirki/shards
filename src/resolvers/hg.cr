@@ -379,7 +379,7 @@ module Shards
       File.exists?(File.join(local_path, ".hg", "dirstate"))
     end
 
-    private def origin_url
+    private def origin_url : String
       @origin_url ||= capture("hg paths default").strip
     end
 
@@ -433,7 +433,7 @@ module Shards
       run("hg files -r #{Process.quote(ref.to_hg_revset)} -- #{Process.quote(path)}", raise_on_fail: false)
     end
 
-    private def capture(command, path = local_path)
+    private def capture(command : String, path : String = local_path) : String
       run(command, capture: true, path: path).as(String)
     end
 

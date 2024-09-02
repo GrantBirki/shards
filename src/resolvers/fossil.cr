@@ -469,7 +469,7 @@ module Shards
       !files.strip.empty?
     end
 
-    private def capture(command, path = local_path)
+    private def capture(command : String, path : String = local_path) : String
       run(command, capture: true, path: path).not_nil!
     end
 

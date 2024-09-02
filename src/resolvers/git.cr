@@ -360,7 +360,7 @@ module Shards
       false
     end
 
-    private def origin_url
+    private def origin_url : String
       @origin_url ||= capture("git ls-remote --get-url origin --bare").strip
     end
 
@@ -415,7 +415,7 @@ module Shards
       !files.strip.empty?
     end
 
-    private def capture(command, path = local_path)
+    private def capture(command : String, path : String = local_path) : String
       run(command, capture: true, path: path).not_nil!
     end
 
