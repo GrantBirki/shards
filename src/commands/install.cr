@@ -44,6 +44,7 @@ module Shards
 
       private def validate(packages)
         packages.each do |package|
+          Log.debug { "validating #{package.name}" }
           if lock = locks.shards.find { |d| d.name == package.name }
             if lock.resolver != package.resolver
               raise LockConflict.new("#{package.name} source changed")
