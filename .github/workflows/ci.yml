@@ -17,7 +17,7 @@ jobs:
           - os: windows-2022
             crystal: nightly
           - os: ubuntu-22.04
-            crystal: 1.0.0
+            crystal: 1.13.2
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ runner.os == 'Linux' }}
         with:
-          name: shards
+          name: shards-${{ github.run_id }}
           path: bin/shards
 
   docs:
