@@ -10,23 +10,41 @@ module Shards
         end
         check_symlink_privilege
 
+        # debug info about the environment
+        Log.debug { "Shards.crystal_version: #{Shards.crystal_version}" }
+        Log.debug { "Shards.frozen?: #{Shards.frozen?}" }
+        Log.debug { "Shards.local?: #{Shards.local?}" }
+        Log.debug { "Shards.with_development?: #{Shards.with_development?}" }
+        Log.debug { "Shards.skip_postinstall?: #{Shards.skip_postinstall?}" }
+        Log.debug { "Shards.skip_executables?: #{Shards.skip_executables?}" }
+        Log.debug { "Shards.cache_path: #{Shards.cache_path}" }
+
         Log.info { "Resolving dependencies" }
 
         solver = MolinilloSolver.new(spec, override)
 
+        Log.debug { "Constructed solver" }
+
         if lockfile?
           # install must be as conservative as possible:
           solver.locks = locks.shards
+          Log.debug { "Loaded locks" }
         end
 
+        Log.debug { "Preparing solver" }
         solver.prepare(development: Shards.with_development?)
+        Log.debug { "Prepared solver" }
 
+        Log.debug { "Fetching packages" }
         packages = handle_resolver_errors { solver.solve }
 
         if Shards.frozen?
+          Log.debug { "--frozen used - validating packages" }
           validate(packages)
+          Log.debug { "Packages validated" }
         end
 
+        Log.debug { "Installing packages" }
         install(packages)
 
         if generate_lockfile?(packages)
