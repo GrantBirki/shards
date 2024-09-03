@@ -225,24 +225,33 @@ module Shards
       @local_path ||= begin
         uri = parse_uri(git_url)
 
+        Log.debug { "constructing path for #{git_url} - uri: #{uri} - uri.path: #{uri.path} - uri.host #{uri.host}" }
+
         path = uri.path
         path += ".git" unless path.ends_with?(".git")
+        Log.debug { "constructing path part 1: #{path}" }
+
         path = Path[path]
+        Log.debug { "constructing path part 2: #{path} - type: #{path.class}" }
+  
         # E.g. turns "c:\local\path.git" into "c\local\path.git". Or just drops the leading slash.
         if (anchor = path.anchor)
           path = Path[path.drive.to_s.rchop(":"), path.relative_to(anchor)]
         end
 
+        Log.debug { "constructing path part 3: #{path} - type: #{path.class}" }
+
         if host = uri.host
+          Log.debug { "constructing path part 4.1: using host #{host}" }
           File.join(Shards.cache_path, host, path)
         else
+          Log.debug { "constructing path part 4.2: using path #{path}" }
           File.join(Shards.cache_path, path)
         end
       end
     end
 
     def git_url
-      Log.debug { "git_url: #{source.strip}" }
       source.strip
     end
 
