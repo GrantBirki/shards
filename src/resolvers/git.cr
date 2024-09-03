@@ -421,7 +421,7 @@ module Shards
     end
 
     private def file_exists?(ref : GitRef, path)
-      files = capture("git -C #{local_path} ls-tree -r --full-tree --name-only #{Process.quote(ref.to_git_ref)} -- #{Process.quote(path)}")
+      files = capture("git ls-tree -r --full-tree --name-only #{Process.quote(ref.to_git_ref)} -- #{Process.quote(path)}")
       !files.strip.empty?
     end
 
