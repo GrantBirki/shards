@@ -61,7 +61,11 @@ module Shards
         end
         spawn do
           begin
-            dep.resolver.update_local_cache if dep.resolver.is_a? GitResolver
+            if dep.resolver.is_a? GitResolver
+              Log.debug { "Prefetching local cache for #{dep.name}" }
+              dep.resolver.update_local_cache
+              Log.debug { "Prefetched local cache for #{dep.name}" }
+            end
             ch.send(nil)
           rescue ex : Exception
             ch.send(ex)
@@ -94,21 +98,29 @@ module Shards
              else
                @spec.dependencies
              end
+      
+      Log.debug { "applying overrides for #{deps.size} dependencies" }
       deps = apply_overrides(deps)
 
+      Log.debug { "prefetching local caches" }
       prefetch_local_caches(deps)
+      Log.debug { "prefetched all local caches" }
 
       base = Molinillo::DependencyGraph(Dependency, Dependency).new
+      Log.debug { "constructed a base dependency graph" }
+
       if locks = @locks
         lock_index = locks.to_h { |d| {d.name, d} }
 
         add_lock base, lock_index, deps
       end
 
+      Log.debug { "resolving dependencies with the Molinillo::Resolver" }
       result =
         Molinillo::Resolver(Dependency, Spec)
           .new(self, self)
           .resolve(deps, base)
+      Log.debug { "resolved dependencies with the Molinillo::Resolver" }
 
       packages = [] of Package
       tsort(result).each do |v|
@@ -130,6 +142,7 @@ module Shards
         resolver = spec.resolver || raise "BUG: returned Spec has no resolver"
         version = spec.version
 
+        Log.debug { "successfully resolved package #{spec.name}" }
         packages << Package.new(spec.name, resolver, version, !on_override(spec).nil?)
       end
 
