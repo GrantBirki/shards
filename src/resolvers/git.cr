@@ -370,11 +370,13 @@ module Shards
     end
 
     private def origin_url
-      @origin_url ||= capture("git ls-remote --get-url origin --bare").strip
+      @origin_url ||= capture("git ls-remote --get-url origin --bare --git-dir=#{local_path} --work-tree=#{local_path}").strip
     end
 
     # Returns whether origin URLs have differing hosts and/or paths.
     protected def origin_changed?
+      Log.debug { "comparing origin_url: '#{origin_url}' with git_url: '#{git_url}'" }
+
       if origin_url == git_url
         Log.debug { "#{origin_url} == #{git_url}" }
         return false
@@ -444,11 +446,15 @@ module Shards
         raise Error.new("Error missing git command line tool. Please install Git first!")
       end
 
+      unless path.nil?
+        Dir.exists?(path) || raise(Error.new("Path #{path} does not exist"))
+      end
+
       Log.debug { "command: `#{command}` path: `#{path}` capture: `#{capture}` local_path: `#{local_path}`" }
 
       output = capture ? IO::Memory.new : Process::Redirect::Close
       error = IO::Memory.new
-      status = Process.run(command, shell: true, output: output, error: error, chdir: path, env: {"GIT_DIR" => local_path})
+      status = Process.run(command, shell: true, output: output, error: error, chdir: path)
 
       if status.success?
         output.to_s if capture
