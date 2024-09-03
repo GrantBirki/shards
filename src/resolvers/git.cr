@@ -370,7 +370,7 @@ module Shards
     end
 
     private def origin_url
-      @origin_url ||= capture("git ls-remote --get-url origin --bare --git-dir=#{local_path} --work-tree=#{local_path}").strip
+      @origin_url ||= capture("git -C #{local_path} ls-remote --get-url origin --bare").strip
     end
 
     # Returns whether origin URLs have differing hosts and/or paths.
