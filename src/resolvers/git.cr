@@ -360,7 +360,7 @@ module Shards
       false
     end
 
-    private def origin_url : String
+    private def origin_url
       @origin_url ||= capture("git ls-remote --get-url origin --bare").strip
     end
 
@@ -372,14 +372,12 @@ module Shards
       end
 
       if origin_url.nil? || git_url.nil?
-        Log.debug { "origin_url=#{origin_url.nil?} git_url=#{git_url.nil?}" }
+        Log.debug { "origin_url or git_url is nil" }
         return true
       end
 
       origin_parsed = parse_uri(origin_url)
-      Log.debug { "origin_parsed.host=#{origin_parsed.host} origin_parsed.path=#{origin_parsed.path}" }
       git_parsed = parse_uri(git_url)
-      Log.debug { "git_parsed.host=#{git_parsed.host} git_parsed.path=#{git_parsed.path}" }
 
       (origin_parsed.host != git_parsed.host) || (origin_parsed.path != git_parsed.path)
     end
@@ -415,7 +413,7 @@ module Shards
       !files.strip.empty?
     end
 
-    private def capture(command : String, path : String = local_path) : String
+    private def capture(command : String, path : String = local_path)
       run(command, capture: true, path: path).not_nil!
     end
 

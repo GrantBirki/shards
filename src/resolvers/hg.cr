@@ -379,7 +379,7 @@ module Shards
       File.exists?(File.join(local_path, ".hg", "dirstate"))
     end
 
-    private def origin_url : String
+    private def origin_url
       @origin_url ||= capture("hg paths default").strip
     end
 
@@ -391,14 +391,12 @@ module Shards
       end
 
       if origin_url.nil? || hg_url.nil?
-        Log.debug { "origin_url=#{origin_url.nil?} hg_url=#{hg_url.nil?}" }
+        Log.debug { "origin_url or hg_url is nil" }
         return true
       end
 
       origin_parsed = parse_uri(origin_url)
-      Log.debug { "origin_parsed.host=#{origin_parsed.host} origin_parsed.path=#{origin_parsed.path}" }
       hg_parsed = parse_uri(hg_url)
-      Log.debug { "hg_parsed.host=#{hg_parsed.host} hg_parsed.path=#{hg_parsed.path}" }
 
       (origin_parsed.host != hg_parsed.host) || (origin_parsed.path != hg_parsed.path)
     end
@@ -433,7 +431,7 @@ module Shards
       run("hg files -r #{Process.quote(ref.to_hg_revset)} -- #{Process.quote(path)}", raise_on_fail: false)
     end
 
-    private def capture(command : String, path : String = local_path) : String
+    private def capture(command : String, path : String = local_path)
       run(command, capture: true, path: path).as(String)
     end
 

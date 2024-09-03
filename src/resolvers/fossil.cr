@@ -426,14 +426,12 @@ module Shards
       end
 
       if origin_url.nil? || fossil_url.nil?
-        Log.debug { "origin_url=#{origin_url.nil?} fossil_url=#{fossil_url.nil?}" }
+        Log.debug { "origin_url or fossil_url is nil" }
         return true
       end
 
       origin_parsed = parse_uri(origin_url)
-      Log.debug { "origin_parsed.host=#{origin_parsed.host} origin_parsed.path=#{origin_parsed.path}" }
       fossil_parsed = parse_uri(fossil_url)
-      Log.debug { "fossil_parsed.host=#{fossil_parsed.host} fossil_parsed.path=#{fossil_parsed.path}" }
 
       (origin_parsed.host != fossil_parsed.host) || (origin_parsed.path != fossil_parsed.path)
     end
@@ -469,7 +467,7 @@ module Shards
       !files.strip.empty?
     end
 
-    private def capture(command : String, path : String = local_path) : String
+    private def capture(command : String, path : String = local_path)
       run(command, capture: true, path: path).not_nil!
     end
 
