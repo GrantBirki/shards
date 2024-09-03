@@ -370,7 +370,7 @@ module Shards
     end
 
     private def origin_url
-      @origin_url ||= capture("git -C #{local_path} ls-remote --get-url origin --bare").strip
+      @origin_url ||= capture("git -C #{local_path} config --get remote.origin.url").strip
     end
 
     # Returns whether origin URLs have differing hosts and/or paths.
@@ -450,7 +450,7 @@ module Shards
         Dir.exists?(path) || raise(Error.new("Path #{path} does not exist"))
       end
 
-      Log.debug { "command: `#{command}` path: `#{path}` capture: `#{capture}` local_path: `#{local_path}`" }
+      Log.debug { "command: `#{command}` path: `#{path}` capture: `#{capture}`" }
 
       output = capture ? IO::Memory.new : Process::Redirect::Close
       error = IO::Memory.new
